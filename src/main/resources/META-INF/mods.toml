@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+#logoFile="random_fixes.png" #optional
+#credits="Thanks for this example mod goes to Java" #optional
+authors="${mod_authors}" #optional
+#displayTest="MATCH_VERSION" # MATCH_VERSION is the default if nothing is specified (#optional)
+
+description='''${mod_description}'''
+[[dependencies."${mod_id}"]]
+   modId="forge"
+   mandatory=true
+   versionRange="${forge_version_range}"
+   ordering="NONE"
+   side="BOTH"
+[[dependencies."${mod_id}"]]
+   modId="minecraft"
+   mandatory=true
+   versionRange="${minecraft_version_range}"
+   ordering="NONE"
+   side="BOTH"

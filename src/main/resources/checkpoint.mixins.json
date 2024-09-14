@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.n4th4not.checkpoint.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "checkpoint.refmap.json",
+  "mixins": [
+    "BedSetSpawnMixin",
+    "RespawnAnchorSetSpawnMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
