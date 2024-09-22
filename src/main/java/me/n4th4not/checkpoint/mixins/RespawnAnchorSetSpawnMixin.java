@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(RespawnAnchorBlock.class)
 public class RespawnAnchorSetSpawnMixin {
     @Redirect(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setRespawnPosition(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/BlockPos;FZZ)V"))
-    private void use(ServerPlayer instance, ResourceKey<Level> dimKey, BlockPos pos, float angle, boolean forced, boolean msg) {
-        if (instance.level.getGameRules().getBoolean(AdditionalGameRules.ALLOW_ANCHOR_RESPAWN_POINT)) {
-            instance.setRespawnPosition(dimKey, pos, angle, forced, msg);
+    private void use(ServerPlayer player, ResourceKey<Level> dimKey, BlockPos pos, float angle, boolean forced, boolean msg) {
+        if (player.level.getGameRules().getBoolean(AdditionalGameRules.ALLOW_ANCHOR_RESPAWN_POINT)) {
+            player.setRespawnPosition(dimKey, pos, angle, forced, msg);
         }
     }
 }

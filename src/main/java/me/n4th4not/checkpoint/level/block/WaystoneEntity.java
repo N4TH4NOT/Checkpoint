@@ -1,26 +1,22 @@
 package me.n4th4not.checkpoint.level.block;
 
 import me.n4th4not.checkpoint.Main;
-import net.minecraft.ChatFormatting;
-import net.minecraft.SharedConstants;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEventPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.Shapes;
 
 public class WaystoneEntity
     extends BlockEntity {
 
-    public static final String STATE = "active";
+    //Methods
+    public static final int ENABLE = 0;
+
+    //Arguments
     public static final int TURN_OFF = 0;
     public static final int SILENT_ON = 1;
     public static final int TURN_ON = 2;
@@ -32,7 +28,7 @@ public class WaystoneEntity
     }
 
     public void setState(ServerPlayer player, int val) {
-        player.connection.send(new ClientboundBlockEventPacket(super.worldPosition, super.getBlockState().getBlock(), 0, val));
+        player.connection.send(new ClientboundBlockEventPacket(super.worldPosition, super.getBlockState().getBlock(), ENABLE, val));
     }
 
     public boolean isActive(ServerPlayer player) {
@@ -54,19 +50,19 @@ public class WaystoneEntity
     }
 
     @Override
-    public boolean triggerEvent(int method, int arg) {
+    public boolean triggerEvent(int method, int data) {
         if (super.level == null || !super.level.isClientSide) return false;
 
-        switch (arg) {
-            case 0:
+        switch (data) {
+            case TURN_OFF:
                 this.state = false;
                 break;
-            case 2:
+            case TURN_ON:
                 super.level.playSound(null, super.worldPosition, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1f, 1f);
 //                super.level.getEntitiesOfClass(Player.class, Shapes.block().bounds().inflate(8))
 //                        .stream().filter(Player::isLocalPlayer)
 //                        .forEach(player -> player.displayClientMessage(Component.translatable("chat." + Main.ID + ".waystone_activated").withStyle(ChatFormatting.DARK_AQUA),true));
-            case 1:
+            case SILENT_ON:
                 this.state = true;
                 break;
             default:

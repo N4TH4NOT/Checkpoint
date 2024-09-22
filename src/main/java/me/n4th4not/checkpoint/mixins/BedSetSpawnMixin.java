@@ -13,11 +13,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ServerPlayer.class)
 public abstract class BedSetSpawnMixin {
-    @Shadow public abstract void setRespawnPosition(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_);
+    @Shadow public abstract void setRespawnPosition(ResourceKey<Level> dimKey, @Nullable BlockPos pos, float angle, boolean blockMethodPositionFinder, boolean displayMessage);
 
     @Redirect(method = "startSleepInBed", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;setRespawnPosition(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/core/BlockPos;FZZ)V"))
-    public void startSleepInBed(ServerPlayer instance, ResourceKey<Level> dimKey, BlockPos pos, float angle, boolean forced, boolean msg) {
-        if (instance.level.getGameRules().getBoolean(AdditionalGameRules.ALLOW_BED_RESPAWN_POINT)) {
+    public void startSleepInBed(ServerPlayer player, ResourceKey<Level> dimKey, BlockPos pos, float angle, boolean forced, boolean msg) {
+        if (player.level.getGameRules().getBoolean(AdditionalGameRules.ALLOW_BED_RESPAWN_POINT)) {
             setRespawnPosition(dimKey, pos, angle, forced, msg);
         }
     }

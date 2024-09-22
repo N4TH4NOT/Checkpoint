@@ -1,4 +1,6 @@
 {
   "block.checkpoint.waystone": "Waystone",
-  "chat.checkpoint.waystone_activated": "Respawn point set"
+  "block.checkpoint.broken_waystone": "Broken waystone",
+  "chat.checkpoint.waystone_activated": "Respawn point set",
+  "chat.checkpoint.no_enough_xp": "You don't have enough power to fix this waystone"
 }

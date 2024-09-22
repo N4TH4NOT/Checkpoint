@@ -1,4 +1,5 @@
 {
   "block.checkpoint.waystone": "Waystone",
+  "block.checkpoint.broken_waystone": "Waystone cassé",
   "chat.checkpoint.waystone_activated": "Point d'apparition défini"
 }

@@ -1,80 +1,47 @@
 package me.n4th4not.checkpoint.level.block;
 
+import me.n4th4not.checkpoint.Main;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.RespawnAnchorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityTicker;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
-
 @SuppressWarnings("deprecation")
 public class WaystoneBlock
-    extends SpawnSetterBlock {
-
-    private static final VoxelShape LOWER_SHAPE = Shapes.or(
-            box(0.0, 0.0, 0.0, 16.0, 3.0, 16.0),
-            box(1.0, 3.0, 1.0, 15.0, 7.0, 15.0),
-            box(2.0, 7.0, 2.0, 14.0, 9.0, 14.0),
-            box(3.0, 9.0, 3.0, 13.0, 16.0, 13.0)
-    ).optimize();
-
-    private static final VoxelShape UPPER_SHAPE = Shapes.or(
-            box(3.0, 0.0, 3.0, 13.0, 8.0, 13.0),
-            box(2.0, 8.0, 2.0, 14.0, 10.0, 14.0),
-            box(1.0, 10.0, 1.0, 15.0, 12.0, 15.0),
-            box(3.0, 12.0, 3.0, 13.0, 14.0, 13.0),
-            box(4.0, 14.0, 4.0, 12.0, 16.0, 12.0)
-    ).optimize();
+    extends AbstractWaystone {
 
     public WaystoneBlock() {
-        super(BlockBehaviour.Properties.copy(Blocks.BEDROCK));
-        super.registerDefaultState(this.stateDefinition.any().setValue(HALF, DoubleBlockHalf.LOWER).setValue(WATERLOGGED, false));
+        super();
     }
 
     @Override
-    public @NotNull VoxelShape getShape(BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return state.getValue(HALF) == DoubleBlockHalf.UPPER ? UPPER_SHAPE : LOWER_SHAPE;
+    public @NotNull InteractionResult use(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult result) {
+        BlockPos pos1 = state.getValue(HALF) == DoubleBlockHalf.LOWER? pos : pos.below();
+        if (player.isCreative() && player.getItemInHand(hand).is(Tags.Items.TOOLS_PICKAXES)) {
+            player.playNotifySound(SoundEvents.CONDUIT_DEACTIVATE, SoundSource.BLOCKS, 0.8f, 0.4f);
+            super.switchTo(level, pos1, level.getBlockState(pos1), Main.BROKEN_WAYSTONE.get());
+        }
+        else if (player instanceof ServerPlayer srvPlayer && level.getBlockEntity(pos1) instanceof WaystoneEntity waystone && !waystone.isActive(srvPlayer)) {
+            waystone.setState(srvPlayer, WaystoneEntity.TURN_ON);
+            srvPlayer.setRespawnPosition(level.dimension(), pos1,0f, false, true);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    public Optional<Vec3> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader levelReader, BlockPos pos, float orientation, @Nullable LivingEntity entity) {
-        return RespawnAnchorBlock.findStandUpPosition(type,levelReader,pos);
-    }
-
     @Nullable
-    @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
         return new WaystoneEntity(pos,state);
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(HALF);
-    }
-
-    @Override
-    public boolean isPathfindable(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos pos, @NotNull PathComputationType compute) {
-        return false;
     }
 }
