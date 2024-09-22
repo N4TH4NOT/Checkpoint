@@ -1,6 +1,5 @@
 package me.n4th4not.checkpoint.level.block;
 
-import me.n4th4not.checkpoint.Main;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,7 +49,7 @@ public class BrokenWaystoneBlock
             boolean flag = half == DoubleBlockHalf.LOWER;
             BlockPos pos1 = pos.relative(flag ? Direction.UP : Direction.DOWN);
             if (player instanceof ServerPlayer srvPlayer && level.getBlockEntity(flag ? pos : pos1) instanceof BrokenWaystoneEntity waystone) {
-                if (waystone.canBeFix()) {
+                if (bypass || waystone.canBeFix()) {
                     ItemStack item = player.getItemInHand(hand);
                     if (bypass && item.is(Tags.Items.TOOLS_PICKAXES)) {
                         waystone.damage(1);

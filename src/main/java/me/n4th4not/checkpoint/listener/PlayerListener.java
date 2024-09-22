@@ -19,9 +19,10 @@ public class PlayerListener {
                 return;
 
             ServerLevel level = player.getServer().getLevel(player.getRespawnDimension());
-            if (level != null && level.getBlockEntity(player.getRespawnPosition()) instanceof WaystoneEntity waystone) waystone.setState(player,WaystoneEntity.TURN_OFF);
+            if (level != null && level.getBlockEntity(player.getRespawnPosition()) instanceof WaystoneEntity waystone) waystone.setState(player, WaystoneEntity.TURN_OFF);
         }
     }
+
     public static void onSentChunk(ChunkWatchEvent.Watch event) {
         if (event.getLevel().dimension() != event.getPlayer().getRespawnDimension()) return;
         BlockPos spawn = event.getPlayer().getRespawnPosition();
