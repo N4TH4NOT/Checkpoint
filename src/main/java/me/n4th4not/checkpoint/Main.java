@@ -1,5 +1,6 @@
 package me.n4th4not.checkpoint;
 
+import cpw.mods.modlauncher.Environment;
 import me.n4th4not.checkpoint.client.render.block.WaystoneModel;
 import me.n4th4not.checkpoint.client.render.block.WaystoneRenderer;
 import me.n4th4not.checkpoint.level.block.BrokenWaystoneBlock;
@@ -24,10 +25,12 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -117,6 +120,9 @@ public class Main {
 
 
     public Main() {
+        if (ModList.get().isLoaded("waystones")) {
+            throw new IllegalStateException("Remove 'Checkpoint' mod,this mod, from your 'mods' folder because your are decided to use 'Waystones' because it is not possible to use both");
+        }
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         bus.addListener(this::onConstructRegistries);
 
