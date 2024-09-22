@@ -12,7 +12,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LevelEvent;
@@ -27,8 +26,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static me.n4th4not.checkpoint.Main.WAYSTONE;
+import static me.n4th4not.checkpoint.Main.WAYSTONE_CORE;
 
-//TODO: Update block mark for nearby players when block was placed again
 @SuppressWarnings("deprecation")
 public class BrokenWaystoneBlock
     extends AbstractWaystone
@@ -49,12 +48,14 @@ public class BrokenWaystoneBlock
             boolean flag = half == DoubleBlockHalf.LOWER;
             BlockPos pos1 = pos.relative(flag ? Direction.UP : Direction.DOWN);
             if (player instanceof ServerPlayer srvPlayer && level.getBlockEntity(flag ? pos : pos1) instanceof BrokenWaystoneEntity waystone) {
-                if (bypass || waystone.canBeFix()) {
+                boolean flag1 = waystone.canBeFix();
+                if (bypass || flag1) {
                     ItemStack item = player.getItemInHand(hand);
-                    if (bypass && item.is(Tags.Items.TOOLS_PICKAXES)) {
+                    if (bypass && item.is(Tags.Items.TOOLS_PICKAXES) && flag1) {
                         waystone.damage(1);
+                        flag1 = waystone.canBeFix();
+                        updateState(level, flag? pos : pos1, flag? state : level.getBlockState(pos1), flag1);
                         level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, pos, EVENT_STATE_ID);
-                        boolean flag1 = waystone.canBeFix();
                         level.playSound(
                                 null,
                                 flag ? pos1 : pos,
@@ -64,10 +65,10 @@ public class BrokenWaystoneBlock
                                 flag1 ? 0.92f - waystone.getDamage() * 0.11f + level.random.nextInt(8) * 0.01f : 1.0f
                         );
                     }
-                    else if (waystone.shouldBeFix()) {
-                        if (!item.is(getFixingItem())) return InteractionResult.PASS;
+                    else if (waystone.shouldBeFix() && item.is(getFixingItem())) {
                         if (!bypass) item.shrink(1);
                         waystone.repair(1 + (level.random.nextFloat() <= 0.12f ? 1 : 0));
+                        updateState(level, flag? pos : pos1, flag? state : level.getBlockState(pos1), true);
 
                         level.levelEvent(
                                 player,
@@ -106,11 +107,17 @@ public class BrokenWaystoneBlock
 
     @Override
     public @NotNull Item getFixingItem() {
-        return Items.ANDESITE;
+        return WAYSTONE_CORE.get();
     }
 
     @Override
     public int getXpCost() {
         return 10; //lvl
+    }
+
+    private void updateState(Level level, BlockPos lower, BlockState state, boolean val) {
+        BlockPos upper = lower.above();
+        level.setBlock(lower, state.setValue(FIXABLE, val), 0);
+        level.setBlock(upper, level.getBlockState(upper).setValue(FIXABLE, val), 0);
     }
 }

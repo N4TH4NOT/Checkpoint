@@ -24,13 +24,10 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -53,18 +50,21 @@ public class Main {
     /**
      * Items
      */
-    private static final Item.Properties DEFAULT_ITEM_PROPERTIES = new Item.Properties().stacksTo(64).tab(CreativeModeTab.TAB_DECORATIONS);
+    private static final Item.Properties WAYSTONE_BLOCK_ITEM_PROPERTIES = new Item.Properties().stacksTo(64).tab(CreativeModeTab.TAB_DECORATIONS);
+    private static final Item.Properties MATERIAL_ITEM_PROPERTIES = new Item.Properties().stacksTo(64).tab(CreativeModeTab.TAB_MATERIALS);
     private static <T extends Item> RegistryObject<T> registerItem(String name, Supplier<T> item) {
         return ITEMS.register(name, item);
     }
 
+    public static final RegistryObject<Item> WAYSTONE_CORE = registerItem("waystone_core", () -> new Item(MATERIAL_ITEM_PROPERTIES));
+
     /**
      * Blocks
      */
-    public static final RegistryObject<WaystoneBlock> WAYSTONE = registerBlockWithItem("waystone", WaystoneBlock::new, DEFAULT_ITEM_PROPERTIES);
+    public static final RegistryObject<WaystoneBlock> WAYSTONE = registerBlockWithItem("waystone", WaystoneBlock::new, WAYSTONE_BLOCK_ITEM_PROPERTIES);
     public static final RegistryObject<BlockEntityType<WaystoneEntity>> WAYSTONE_TILE = registerTile("waystone", () -> BlockEntityType.Builder.of(WaystoneEntity::new, WAYSTONE.get()).build(null));
 
-    public static final RegistryObject<BrokenWaystoneBlock> BROKEN_WAYSTONE = registerBlockWithItem("broken_waystone", BrokenWaystoneBlock::new, DEFAULT_ITEM_PROPERTIES);
+    public static final RegistryObject<BrokenWaystoneBlock> BROKEN_WAYSTONE = registerBlockWithItem("broken_waystone", BrokenWaystoneBlock::new, WAYSTONE_BLOCK_ITEM_PROPERTIES);
     public static final RegistryObject<BlockEntityType<BrokenWaystoneEntity>> BROKEN_WAYSTONE_TILE = registerTile("broken_waystone", () -> BlockEntityType.Builder.of(BrokenWaystoneEntity::new, BROKEN_WAYSTONE.get()).build(null));
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {

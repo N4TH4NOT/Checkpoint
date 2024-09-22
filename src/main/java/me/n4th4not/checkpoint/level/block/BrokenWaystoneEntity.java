@@ -13,7 +13,7 @@ public class BrokenWaystoneEntity
 
     private static final String NBT_DAMAGE = "Damage";
     public static final int NO_DAMAGE = 0;
-    public static final int MAX_DAMAGE = 5;
+    public static final int MAX_DAMAGE = 2;
 
     private int damage = 0;
 

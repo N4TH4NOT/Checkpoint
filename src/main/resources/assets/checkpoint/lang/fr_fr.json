@@ -1,5 +1,7 @@
 {
   "block.checkpoint.waystone": "Waystone",
   "block.checkpoint.broken_waystone": "Waystone cassé",
-  "chat.checkpoint.waystone_activated": "Point d'apparition défini"
+  "chat.checkpoint.waystone_activated": "Point d'apparition défini",
+  "chat.checkpoint.no_enough_xp": "Vous n'avez pas assez d'expérience pour réparer la waystone",
+  "item.checkpoint.waystone_core": "Coeur de waystone"
 }
